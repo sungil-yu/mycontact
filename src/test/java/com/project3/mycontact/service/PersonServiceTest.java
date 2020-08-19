@@ -8,7 +8,10 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
+import java.time.LocalDate;
 import java.util.List;
+import java.util.stream.Collector;
+import java.util.stream.Collectors;
 
 @SpringBootTest
 class PersonServiceTest {
@@ -24,7 +27,6 @@ class PersonServiceTest {
     @Test
     void getPeopleExcludeBlocks(){
         givenPeople();
-        givenBlocks();
 
         List<Person> result = personService.getPeopleExcludeBlocks();
 
@@ -32,23 +34,33 @@ class PersonServiceTest {
         result.forEach(System.out::println);
     }
 
-    private void givenBlocks() {
-        givenBlock("martin");
-    }
 
-    private Block givenBlock(String name) {
+    @Test
+    void cascadeTest(){
+        givenPeople();
+        List<Person> result = personRepository.findAll();
 
-        Block block = new Block();
-        block.setName(name);
+        result.forEach(System.out::println);
 
-      return blockRepository.save(block);
+        Person person = result.stream().filter(people -> people.getBlock()!=null).collect(Collectors.toList()).get(0);
+        person.getBlock().setStartDate(LocalDate.now());
+        person.getBlock().setEndDate(LocalDate.now());
+
+        personRepository.save(person);
+
+        personRepository.findAll().forEach(System.out::println);
+
+        personRepository.delete(person);
+        personRepository.findAll().forEach(System.out::println);
+        blockRepository.findAll().forEach(System.out::println);
+
 
     }
 
     private void givenBlockPerson(String name,int age,String bloodType){
 
         Person blockPerson = new Person(name, age, bloodType);
-        blockPerson.setBlock(givenBlock(name));
+        blockPerson.setBlock(new Block(name));
         personRepository.save(blockPerson);
 
     }
