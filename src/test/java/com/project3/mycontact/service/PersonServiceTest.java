@@ -50,11 +50,23 @@ class PersonServiceTest {
 
         personRepository.findAll().forEach(System.out::println);
 
-        personRepository.delete(person);
+//        personRepository.delete(person);
+//        personRepository.findAll().forEach(System.out::println);
+
+        person.setBlock(null);
+        personRepository.save(person);
         personRepository.findAll().forEach(System.out::println);
         blockRepository.findAll().forEach(System.out::println);
 
+    }
 
+    @Test
+    void getPerson(){
+        givenPeople();
+
+        Person person = personService.getPerson(2L);
+
+        System.out.println(person);
     }
 
     private void givenBlockPerson(String name,int age,String bloodType){
@@ -84,6 +96,8 @@ class PersonServiceTest {
 
         personRepository.save(person);
     }
+
+
 
 
 }

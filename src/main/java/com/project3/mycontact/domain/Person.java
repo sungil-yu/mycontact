@@ -4,6 +4,7 @@ package com.project3.mycontact.domain;
 import lombok.*;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotEmpty;
 import java.time.LocalDate;
 
 @Data
@@ -20,9 +21,9 @@ public class Person {
     private String name;
 
     @NonNull
-    private int age;
+    private Integer age;
 
-    private String hoddy;
+    private String hobby;
 
     @NonNull
     private String bloodType;
@@ -34,6 +35,6 @@ public class Person {
     @ToString.Exclude
     private String phoneNumber;
 
-    @OneToOne(cascade = CascadeType.ALL)
+    @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
     private Block block;
 }
