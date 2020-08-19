@@ -1,8 +1,6 @@
 package com.project3.mycontact.service;
 
-import com.project3.mycontact.domain.Block;
 import com.project3.mycontact.domain.Person;
-import com.project3.mycontact.repository.BlockRepository;
 import com.project3.mycontact.repository.PersonRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,10 +25,10 @@ public class PersonService {
 
     public List<Person> getPeopleExcludeBlocks(){
 
-        List<Person> people = personRepository.findAll();
+//        List<Person> people = personRepository.findAll();
+//        return people.stream().filter( person -> person.getBlock()==null).collect(Collectors.toList());
 
-
-        return people.stream().filter( person -> person.getBlock()==null).collect(Collectors.toList());
+        return personRepository.findByBlockIsNull();
 
     }
 
@@ -41,5 +39,12 @@ public class PersonService {
         log.info("person : {}",person);
 
         return person;
+    }
+
+    public List<Person> getPeopleByName(String name) {
+
+
+        return personRepository.findByName(name);
+
     }
 }

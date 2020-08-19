@@ -69,6 +69,22 @@ class PersonServiceTest {
         System.out.println(person);
     }
 
+    @Test
+    void getPeopleByName(){
+        givenPeople();
+        List<Person> result = personService.getPeopleByName("martin");
+
+        result.forEach(System.out::println);
+    }
+
+
+    @Test
+    void findByBloodType(){
+         givenPeople();
+
+        personRepository.findByBloodType("A").forEach(System.out::println);
+    }
+
     private void givenBlockPerson(String name,int age,String bloodType){
 
         Person blockPerson = new Person(name, age, bloodType);
