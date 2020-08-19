@@ -21,10 +21,13 @@ class PersonRepositoryTest {
         Person person = Person.builder()
                 .name("John")
                 .age(20)
+                .bloodType("A")
+                .job("student")
+                .hoddy("soccer")
                 .build();
 
         personRepository.save(person);
-
+        System.out.println(person);
         List<Person> persons = personRepository.findAll();
 
         assertThat(persons.get(0).getAge()).isEqualTo(20);
