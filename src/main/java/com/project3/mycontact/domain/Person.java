@@ -6,27 +6,28 @@ import lombok.*;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
-import javax.validation.constraints.NotEmpty;
-import javax.validation.constraints.NotNull;
+import javax.persistence.OneToOne;
 import java.time.LocalDate;
 
-@Builder
-@Entity
 @Data
+@Entity
+@NoArgsConstructor
+@RequiredArgsConstructor
 public class Person {
 
     @Id
     @GeneratedValue
     private Long id;
 
-    @NotNull
+    @NonNull
     private String name;
 
-    @NotEmpty
+    @NonNull
     private int age;
 
     private String hoddy;
 
+    @NonNull
     private String bloodType;
 
     private LocalDate birthday;
@@ -36,5 +37,6 @@ public class Person {
     @ToString.Exclude
     private String phoneNumber;
 
-
+    @OneToOne
+    private Block block;
 }

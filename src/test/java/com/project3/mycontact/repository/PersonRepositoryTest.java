@@ -18,13 +18,10 @@ class PersonRepositoryTest {
 
     @Test
     void crud(){
-        Person person = Person.builder()
-                .name("John")
-                .age(20)
-                .bloodType("A")
-                .job("student")
-                .hoddy("soccer")
-                .build();
+        Person person = new Person();
+        person.setName("John");
+        person.setAge(10);
+        person.setBloodType("A");
 
         personRepository.save(person);
         System.out.println(person);
