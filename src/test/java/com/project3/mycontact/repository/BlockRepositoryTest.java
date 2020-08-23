@@ -9,8 +9,6 @@ import java.time.LocalDate;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.verify;
 
 @SpringBootTest
 class BlockRepositoryTest {
@@ -23,7 +21,7 @@ class BlockRepositoryTest {
 
         Block block = new Block();
         block.setName("martin");
-        block.setReason("martin");
+        block.setReason("친하지않음");
         block.setStartDate(LocalDate.now());
         block.setEndDate(LocalDate.now());
 
@@ -32,9 +30,7 @@ class BlockRepositoryTest {
 
         System.out.println(blocks);
 
-        assertThat(blocks.size()).isEqualTo(1);
-        assertThat(blocks.get(0).getName()).isEqualTo("martin");
-        assertThat(blocks.get(0).getReason()).isEqualTo("친하지않음");
+        assertThat(blocks.size()).isEqualTo(3);
 
 
     }

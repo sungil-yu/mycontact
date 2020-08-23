@@ -4,12 +4,13 @@ import com.project3.mycontact.domain.Person;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.transaction.annotation.Transactional;
 
-import java.time.LocalDate;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+@Transactional
 @SpringBootTest
 class PersonRepositoryTest {
 
@@ -24,10 +25,10 @@ class PersonRepositoryTest {
         person.setBloodType("A");
 
         personRepository.save(person);
-        System.out.println(person);
-        List<Person> persons = personRepository.findAll();
 
-        assertThat(persons.get(0).getAge()).isEqualTo(20);
+        List<Person> persons = personRepository.findByName("John");
+
+        assertThat(persons.get(0).getAge()).isEqualTo(10);
         assertThat(persons.get(0).getName()).isEqualTo("John");
 
 
@@ -35,33 +36,24 @@ class PersonRepositoryTest {
 
     @Test
     void findByBirthdayBetween(){
-    givenPeople();
 
-        List<Person> result = personRepository.findByBirthdayBetween(
-                LocalDate.of(1991, 8, 1),
-                LocalDate.of(1991, 8, 31)
-        );
-
-        result.forEach(System.out::println);
+        List<Person> result = personRepository.findByMonthOfBirthday(8);
+        assertThat(result.size()).isEqualTo(2);
+        assertThat(result.get(0).getName()).isEqualTo("martin");
+        assertThat(result.get(1).getName()).isEqualTo("sophia");
 
     }
 
-    private void givenPeople() {
-        givenPerson("martin", 10, "A",LocalDate.of(1991,8,3));
-        givenPerson("david", 12, "B",LocalDate.of(1992,3,4));
-        givenPerson("dennis", 40, "O",LocalDate.of(1991,8,14));
-        givenPerson("sophia", 10, "O",LocalDate.of(1992,6,14));
-        givenPerson("ann", 20, "AB",LocalDate.of(1991,8,24));
+
+    @Test
+    void findByBloodType(){
+
+        List<Person> result = personRepository.findByBloodType("A");
+
+        assertThat(result.size()).isEqualTo(3);
+        assertThat(result.get(0).getName()).isEqualTo("martin");
+        assertThat(result.get(1).getName()).isEqualTo("dennis");
     }
-    private void givenPerson(String name, int age, String bloodType,LocalDate birthday) {
 
 
-        Person person = new Person();
-        person.setName(name);
-        person.setAge(age);
-        person.setBloodType(bloodType);
-        person.setBirthday(birthday);
-
-        personRepository.save(person);
-    }
 }
