@@ -1,6 +1,7 @@
 package com.project3.mycontact.repository;
 
 import com.project3.mycontact.domain.Person;
+import com.project3.mycontact.domain.dto.Birthday;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -10,6 +11,7 @@ import java.time.LocalDate;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertAll;
 
 @Transactional
 @SpringBootTest
@@ -18,37 +20,52 @@ class PersonRepositoryTest {
     @Autowired
     private PersonRepository personRepository;
 
+
     @Test
-    void crud(){
-        Person person = new Person();
-        person.setName("John");
+    void findByName(){
+        List<Person> people = personRepository.findByName("tony");
+        assertThat(people.size()).isEqualTo(1);
 
-        personRepository.save(person);
+        Person person = people.get(0);
 
-        List<Person> persons = personRepository.findByName("John");
+        assertAll(
+                () -> assertThat(person.getName()).isEqualTo("tony"),
+                () -> assertThat(person.getPhoneNumber()).isEqualTo("010-2222-5555"),
+                () -> assertThat(person.getJob()).isEqualTo("officer"),
+                () -> assertThat(person.getBirthday()).isEqualTo(Birthday.of(LocalDate.of(1991, 7, 10))),
+                () -> assertThat(person.getAddress()).isNotEmpty(),
+                () -> assertThat(person.getHobby()).isEqualTo("reading"),
+                () -> assertThat(person.isDeleted()).isFalse()
+                );
+    }
 
-//        assertThat(persons.get(0).getAge()).isEqualTo(10);
-        assertThat(persons.get(0).getName()).isEqualTo("John");
+    @Test
+    void findByNameIfDeleted(){
 
+        List<Person> people = personRepository.findByName("andrew");
+        assertThat(people.size()).isEqualTo(0);
 
     }
 
     @Test
-    void findByBirthdayBetween(){
+    void findByMonthOfBirthday(){
+        List<Person> people = personRepository.findByMonthOfBirthday(7);
 
-        List<Person> result = personRepository.findByMonthOfBirthday(8);
-
-
-
-        assertThat(result.size()).isEqualTo(2);
-        assertThat(result.get(0).getName()).isEqualTo("martin");
-        assertThat(result.get(1).getName()).isEqualTo("sophia");
-
+        assertAll(
+                () -> assertThat(people.get(0).getName()).isEqualTo("david"),
+                () -> assertThat(people.get(1).getName()).isEqualTo("tony")
+        );
     }
 
+    @Test
+    void findPeopleDeleted(){
+        List<Person> people = personRepository.findPeopleDeleted();
 
-
-
+        assertAll(
+                () -> assertThat(people.get(0).getName()).isEqualTo("andrew"),
+                () -> assertThat(people.size()).isEqualTo(1)
+        );
+    }
 
 
 }

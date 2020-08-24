@@ -8,6 +8,7 @@ import com.project3.mycontact.domain.dto.Birthday;
 import com.project3.mycontact.repository.PersonRepository;
 import org.apache.tomcat.jni.Local;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -143,6 +144,7 @@ class PersonControllerTest {
         assertThat(personRepository.findById(1L).get().getName()).isEqualTo("martinModified");
     }
 
+    @Disabled
     @Test
     void deletePerson() throws Exception {
 
