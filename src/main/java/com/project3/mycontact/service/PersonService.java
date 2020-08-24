@@ -77,4 +77,14 @@ public class PersonService {
 
         personRepository.save(person);
     }
+
+    public void delete(Long id) {
+
+
+        Person person = personRepository.findById(id).orElseThrow(() -> new RuntimeException("아이디가 존재하지 않습니다."));
+
+        person.setDeleted(true);
+        personRepository.save(person);
+    }
+
 }

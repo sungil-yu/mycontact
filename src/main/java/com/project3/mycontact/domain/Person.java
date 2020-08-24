@@ -4,6 +4,8 @@ package com.project3.mycontact.domain;
 import com.project3.mycontact.controller.dto.PersonDto;
 import com.project3.mycontact.domain.dto.Birthday;
 import lombok.*;
+import org.hibernate.annotations.ColumnDefault;
+import org.hibernate.annotations.Where;
 import org.springframework.util.StringUtils;
 
 import javax.persistence.*;
@@ -15,6 +17,7 @@ import javax.validation.constraints.NotEmpty;
 @Entity
 @NoArgsConstructor
 @RequiredArgsConstructor
+@Where(clause = "deleted = false")
 public class Person {
 
     @Id
@@ -51,6 +54,8 @@ public class Person {
     @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
     private Block block;
 
+    @ColumnDefault("0")
+    private boolean deleted;
 
     public void set(PersonDto personDto){
         if(personDto.getAge() != 0 ){
@@ -76,9 +81,6 @@ public class Person {
         if(!StringUtils.isEmpty(personDto.getPhoneNumber())){
             this.setPhoneNumber(personDto.getPhoneNumber());
         }
-
-
-
 
     }
 }
