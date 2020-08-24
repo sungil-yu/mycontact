@@ -3,7 +3,7 @@ package com.project3.mycontact.service;
 import com.project3.mycontact.controller.dto.PersonDto;
 import com.project3.mycontact.domain.Person;
 import com.project3.mycontact.exception.PersonNotFoundException;
-import com.project3.mycontact.exception.RenameNotPermittedException;
+import com.project3.mycontact.exception.RenameIsNotPermittedException;
 import com.project3.mycontact.repository.PersonRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -54,7 +54,7 @@ public class PersonService {
         Person person = personRepository.findById(id).orElseThrow(PersonNotFoundException::new);
 
         if(!person.getName().equals(personDto.getName())){
-            throw new RenameNotPermittedException();
+            throw new RenameIsNotPermittedException();
         }
 
         person.set(personDto);

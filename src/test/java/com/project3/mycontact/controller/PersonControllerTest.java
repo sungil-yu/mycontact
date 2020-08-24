@@ -5,8 +5,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.project3.mycontact.controller.dto.PersonDto;
 import com.project3.mycontact.domain.Person;
 import com.project3.mycontact.domain.dto.Birthday;
+import com.project3.mycontact.exception.handler.GlobalExceptionHandler;
 import com.project3.mycontact.repository.PersonRepository;
-import org.apache.tomcat.jni.Local;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
@@ -18,6 +18,7 @@ import org.springframework.http.converter.json.MappingJackson2HttpMessageConvert
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.context.WebApplicationContext;
 
 import java.time.LocalDate;
 
@@ -33,8 +34,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @SpringBootTest
 class PersonControllerTest {
 
-    @Autowired
-    private PersonController personController;
 
     @Autowired
     private PersonRepository personRepository;
@@ -45,18 +44,19 @@ class PersonControllerTest {
     private MockMvc mvc;
 
     @Autowired
-    private MappingJackson2HttpMessageConverter messageConverter;
+    private WebApplicationContext wac;
 
     @BeforeEach
     void setUp(){
-        mvc = MockMvcBuilders.standaloneSetup(personController).setMessageConverters(messageConverter).build();
+        mvc = MockMvcBuilders
+                .webAppContextSetup(wac)
+                .build();
     }
 
     @Test
     void getPerson() throws Exception {
 
         mvc.perform(get("/api/person/1"))
-                .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.name").value("martin"))
                 .andExpect(jsonPath("$.hobby").isEmpty())
@@ -80,7 +80,6 @@ class PersonControllerTest {
                 .characterEncoding("utf-8")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(toJsonString(dto)))
-                .andDo(print())
                 .andExpect(status().isCreated());
 
         Person result = personRepository.findAll(Sort.by(Sort.Direction.DESC,"id")).get(0);
@@ -93,7 +92,18 @@ class PersonControllerTest {
                 () -> assertThat(result.getJob()).isEqualTo("programmer"),
                 () -> assertThat(result.getPhoneNumber()).isEqualTo("010-1111-2222")
         );
+    }
 
+    @Test
+    void postPersonIfNameIsNull() throws Exception {
+        PersonDto dto = new PersonDto();
+
+        mvc.perform(post("/api/person")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(toJsonString(dto)))
+                .andExpect(jsonPath("$.code").value(500))
+                .andExpect(jsonPath("$.message").value("알 수 없는 서버 오류가 발생하였습니다."))
+                .andExpect(status().is5xxServerError());
     }
 
     @Test
@@ -105,7 +115,6 @@ class PersonControllerTest {
                 .characterEncoding("utf-8")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(toJsonString(dto)))
-                .andDo(print())
                 .andExpect(status().isOk());
 
         Person result = personRepository.findById(1L).get();
@@ -123,13 +132,29 @@ class PersonControllerTest {
         PersonDto dto = PersonDto.of("james",  "programming","판교", LocalDate.now(), "programmer", "010-1111-2222");
 
         mvc.perform(put("/api/person/1")
-                .characterEncoding("utf-8")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(toJsonString(dto)))
-                .andDo(print())
-                .andExpect(status().isOk());
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.code").value(400))
+                .andExpect(jsonPath("$.message").value("이름 변경이 허용되지 않습니다."));
 
     }
+
+    @Test
+    void modifyPersonIfPersonNotFound() throws Exception {
+
+        PersonDto dto = PersonDto.of("martin", "programming", "판교", LocalDate.now(), "programmer", "010-1111-2222");
+
+        mvc.perform(put("/api/person/10")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(toJsonString(dto)))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.code").value(400))
+                .andExpect(jsonPath("$.message").value("Person의 Entity가 존재하지 않습니다."));
+
+
+    }
+
 
     @Test
     void modifyName() throws Exception {
@@ -138,7 +163,6 @@ class PersonControllerTest {
                 .param("name", "martinModified")
                 .characterEncoding("utf-8")
                 .contentType(MediaType.APPLICATION_JSON))
-                .andDo(print())
                 .andExpect(status().isOk());
 
         assertThat(personRepository.findById(1L).get().getName()).isEqualTo("martinModified");
@@ -149,7 +173,6 @@ class PersonControllerTest {
     void deletePerson() throws Exception {
 
         mvc.perform(delete("/api/person/1"))
-                .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(content().string("true"));
 
@@ -159,6 +182,7 @@ class PersonControllerTest {
     }
 
     private String toJsonString(PersonDto personDto) throws JsonProcessingException {
+
         return objectMapper.writeValueAsString(personDto);
     }
 }

@@ -3,6 +3,9 @@ package com.project3.mycontact.controller;
 
 import com.project3.mycontact.controller.dto.PersonDto;
 import com.project3.mycontact.domain.Person;
+import com.project3.mycontact.exception.PersonNotFoundException;
+import com.project3.mycontact.exception.RenameIsNotPermittedException;
+import com.project3.mycontact.exception.dto.ErrorResponse;
 import com.project3.mycontact.repository.PersonRepository;
 import com.project3.mycontact.service.PersonService;
 import lombok.extern.slf4j.Slf4j;
@@ -46,15 +49,14 @@ public class PersonController {
     //수정
     @PutMapping("/{id}")
     public void modifyPerson(@PathVariable Long id ,@RequestBody PersonDto personDto){
-
-        personService.modify(id,personDto);
-
+          personService.modify(id, personDto);
 
     }
 
     //일부 수정
     @PatchMapping("/{id}")
     public void modifyPerson(@PathVariable Long id ,String name){
+
 
         personService.modify(id,name);
 
@@ -63,7 +65,7 @@ public class PersonController {
     @DeleteMapping("/{id}")
     public void deletePerson(@PathVariable Long id){
         personService.delete(id);
-
-
     }
+
+
 }
