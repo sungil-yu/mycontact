@@ -14,7 +14,6 @@ import java.time.LocalDate;
 @Data
 public class Birthday {
     private static final int KOREA_AGE;
-    private static LocalDate today;
 
     private Integer yearOfBirthday;
     private Integer monthOfBirthday;
@@ -23,7 +22,6 @@ public class Birthday {
 
     static {
         KOREA_AGE =1;
-        today = LocalDate.now();
     }
 
     private Birthday(LocalDate birthday){
@@ -33,11 +31,11 @@ public class Birthday {
     }
 
     public int getAge(){
-        return today.getYear() - this.yearOfBirthday + KOREA_AGE;
+        return LocalDate.now().getYear() - this.yearOfBirthday + KOREA_AGE;
     }
 
     public boolean isBirthdayToday(){
-        return today.equals(LocalDate.of(yearOfBirthday, monthOfBirthday, dayOfBirthday));
+        return LocalDate.now().equals(LocalDate.of(yearOfBirthday, monthOfBirthday, dayOfBirthday));
     }
 
     public static Birthday of(LocalDate birthday){
