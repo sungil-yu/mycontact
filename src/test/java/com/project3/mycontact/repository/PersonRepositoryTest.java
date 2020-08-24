@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDate;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -21,14 +22,12 @@ class PersonRepositoryTest {
     void crud(){
         Person person = new Person();
         person.setName("John");
-        person.setAge(10);
-        person.setBloodType("A");
 
         personRepository.save(person);
 
         List<Person> persons = personRepository.findByName("John");
 
-        assertThat(persons.get(0).getAge()).isEqualTo(10);
+//        assertThat(persons.get(0).getAge()).isEqualTo(10);
         assertThat(persons.get(0).getName()).isEqualTo("John");
 
 
@@ -38,6 +37,9 @@ class PersonRepositoryTest {
     void findByBirthdayBetween(){
 
         List<Person> result = personRepository.findByMonthOfBirthday(8);
+
+
+
         assertThat(result.size()).isEqualTo(2);
         assertThat(result.get(0).getName()).isEqualTo("martin");
         assertThat(result.get(1).getName()).isEqualTo("sophia");
@@ -45,15 +47,8 @@ class PersonRepositoryTest {
     }
 
 
-    @Test
-    void findByBloodType(){
 
-        List<Person> result = personRepository.findByBloodType("A");
 
-        assertThat(result.size()).isEqualTo(3);
-        assertThat(result.get(0).getName()).isEqualTo("martin");
-        assertThat(result.get(1).getName()).isEqualTo("dennis");
-    }
 
 
 }

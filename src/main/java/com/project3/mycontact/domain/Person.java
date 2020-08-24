@@ -3,15 +3,18 @@ package com.project3.mycontact.domain;
 
 import com.project3.mycontact.controller.dto.PersonDto;
 import com.project3.mycontact.domain.dto.Birthday;
-import lombok.*;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+import lombok.NonNull;
+import lombok.RequiredArgsConstructor;
 import org.hibernate.annotations.ColumnDefault;
 import org.hibernate.annotations.Where;
 import org.springframework.util.StringUtils;
 
 import javax.persistence.*;
 import javax.validation.Valid;
-import javax.validation.constraints.Min;
 import javax.validation.constraints.NotEmpty;
+import java.time.LocalDate;
 
 @Data
 @Entity
@@ -19,6 +22,8 @@ import javax.validation.constraints.NotEmpty;
 @RequiredArgsConstructor
 @Where(clause = "deleted = false")
 public class Person {
+
+    private static final int KOREA_AGE;
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -29,16 +34,9 @@ public class Person {
     @Column(nullable = false)
     private String name;
 
-    @NonNull
-    @Min(1)
-    private Integer age;
 
     private String hobby;
 
-    @NotEmpty
-    @Column(nullable = false)
-    @NonNull
-    private String bloodType;
 
     private String address;
 
@@ -48,26 +46,19 @@ public class Person {
 
     private String job;
 
-    @ToString.Exclude
     private String phoneNumber;
-
-    @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
-    private Block block;
 
     @ColumnDefault("0")
     private boolean deleted;
 
+    static {
+        KOREA_AGE =1;
+    }
+
     public void set(PersonDto personDto){
-        if(personDto.getAge() != 0 ){
-            this.setAge(personDto.getAge());
-        }
 
         if(!StringUtils.isEmpty(personDto.getHobby())){
             this.setHobby(personDto.getHobby());
-        }
-
-        if(!StringUtils.isEmpty(personDto.getBloodType())){
-            this.setBloodType(personDto.getBloodType());
         }
 
         if(!StringUtils.isEmpty(personDto.getAddress())){
@@ -82,5 +73,22 @@ public class Person {
             this.setPhoneNumber(personDto.getPhoneNumber());
         }
 
+        if(personDto.getBirthday() != null){
+            this.setBirthday(Birthday.of(personDto.getBirthday()));
+        }
     }
+
+
+
+    public Integer getAge(){
+        if(this.birthday != null)
+            return LocalDate.now().getYear() - this.birthday.getYearOfBirthday() + KOREA_AGE;
+        else
+            return null;
+    }
+
+    public boolean isBirthdayToday(){
+        return LocalDate.now().equals(LocalDate.of(this.birthday.getYearOfBirthday(), this.birthday.getMonthOfBirthday(), this.birthday.getDayOfBirthday()));
+    }
+
 }

@@ -34,11 +34,11 @@ public class PersonController {
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public ResponseEntity<?> postPerson(@RequestBody Person resource) throws URISyntaxException {
+    public ResponseEntity<?> postPerson(@RequestBody PersonDto personDto) throws URISyntaxException {
 
-        personService.put(resource);
+        personService.put(personDto);
 
-        String uri = "/api/person"+resource.getId();
+        String uri = "/api/person";
         return ResponseEntity.created(new URI(uri)).body("{}");
     }
 
@@ -49,7 +49,6 @@ public class PersonController {
 
         personService.modify(id,personDto);
 
-        log.info("person -> {}" ,personRepository.findAll());
 
     }
 
@@ -59,13 +58,12 @@ public class PersonController {
 
         personService.modify(id,name);
 
-        log.info("person -> {}" ,personRepository.findAll());
     }
 
     @DeleteMapping("/{id}")
     public void deletePerson(@PathVariable Long id){
         personService.delete(id);
 
-        log.info("person -> {}" ,personRepository.findAll());
+
     }
 }
