@@ -13,20 +13,34 @@ import java.time.LocalDate;
 @NoArgsConstructor
 @Data
 public class Birthday {
+    private static final int KOREA_AGE;
+    private static LocalDate today;
 
     private Integer yearOfBirthday;
-
-    @Min(1)
-    @Max(12)
     private Integer monthOfBirthday;
-
-    @Min(1)
-    @Max(31)
     private Integer dayOfBirthday;
 
-    public Birthday(LocalDate birthday){
+
+    static {
+        KOREA_AGE =1;
+        today = LocalDate.now();
+    }
+
+    private Birthday(LocalDate birthday){
         this.yearOfBirthday = birthday.getYear();
         this.monthOfBirthday = birthday.getMonthValue();
         this.dayOfBirthday = birthday.getDayOfMonth();
+    }
+
+    public int getAge(){
+        return today.getYear() - this.yearOfBirthday + KOREA_AGE;
+    }
+
+    public boolean isBirthdayToday(){
+        return today.equals(LocalDate.of(yearOfBirthday, monthOfBirthday, dayOfBirthday));
+    }
+
+    public static Birthday of(LocalDate birthday){
+        return new Birthday(birthday);
     }
 }
