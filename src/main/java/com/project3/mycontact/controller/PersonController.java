@@ -3,13 +3,13 @@ package com.project3.mycontact.controller;
 
 import com.project3.mycontact.controller.dto.PersonDto;
 import com.project3.mycontact.domain.Person;
-import com.project3.mycontact.exception.PersonNotFoundException;
-import com.project3.mycontact.exception.RenameIsNotPermittedException;
-import com.project3.mycontact.exception.dto.ErrorResponse;
 import com.project3.mycontact.repository.PersonRepository;
 import com.project3.mycontact.service.PersonService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.*;
 import javax.validation.Valid;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.util.List;
 
 @RequestMapping("/api/person")
 @RestController
@@ -35,6 +36,10 @@ public class PersonController {
         return personService.getPerson(id);
     }
 
+    @GetMapping
+    public Page<Person> getAll(@PageableDefault(page = 10,size = 10) Pageable pageable){
+        return personService.getAll(pageable);
+    }
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
