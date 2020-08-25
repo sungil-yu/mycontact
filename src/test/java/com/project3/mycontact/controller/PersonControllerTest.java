@@ -50,6 +50,7 @@ class PersonControllerTest {
     void setUp(){
         mvc = MockMvcBuilders
                 .webAppContextSetup(wac)
+                .alwaysDo(print())
                 .build();
     }
 
@@ -101,11 +102,39 @@ class PersonControllerTest {
         mvc.perform(post("/api/person")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(toJsonString(dto)))
-                .andExpect(jsonPath("$.code").value(500))
-                .andExpect(jsonPath("$.message").value("알 수 없는 서버 오류가 발생하였습니다."))
-                .andExpect(status().is5xxServerError());
+                .andExpect(jsonPath("$.code").value(400))
+                .andExpect(jsonPath("$.message").value("이름은 필수값입니다."))
+                .andExpect(status().isBadRequest());
     }
 
+    @Test
+    void postPersonIfNameIsEmpty() throws Exception {
+        PersonDto dto = new PersonDto();
+
+        dto.setName("");
+
+        mvc.perform(post("/api/person")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(toJsonString(dto)))
+                .andExpect(jsonPath("$.code").value(400))
+                .andExpect(jsonPath("$.message").value("이름은 필수값입니다."))
+                .andExpect(status().isBadRequest());
+    }
+
+    @Test
+    void postPersonIfNameBlankString() throws Exception {
+        PersonDto dto = new PersonDto();
+
+        dto.setName(" ");
+
+        mvc.perform(post("/api/person")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(toJsonString(dto)))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.code").value(400))
+                .andExpect(jsonPath("$.message").value("이름은 필수값입니다."));
+
+    }
     @Test
     void modifyPerson() throws Exception {
 

@@ -14,6 +14,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
 import java.net.URI;
 import java.net.URISyntaxException;
 
@@ -37,7 +38,7 @@ public class PersonController {
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public ResponseEntity<?> postPerson(@RequestBody PersonDto personDto) throws URISyntaxException {
+    public ResponseEntity<?> postPerson(@RequestBody @Valid PersonDto personDto) throws URISyntaxException {
 
         personService.put(personDto);
 

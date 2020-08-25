@@ -59,6 +59,7 @@ public class PersonService {
 
         person.set(personDto);
 
+        log.info("person {}",person);
 
         personRepository.save(person);
     }
